@@ -5,7 +5,7 @@ import typer
 from rich.console import Console
 from rich.table import Table
 
-from copilot_more.token_counter import TokenUsage
+from copilot_more_continued.token_counter import TokenUsage
 
 app = typer.Typer()
 console = Console()

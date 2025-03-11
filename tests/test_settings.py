@@ -13,9 +13,10 @@ from pydantic_settings import SettingsConfigDict
 
 # Ensure we don't trigger the validation when importing for tests
 with mock.patch.dict(os.environ, {"REFRESH_TOKEN": "gho_test_token_for_import"}):
-    from copilot_more.settings import Settings
+    from copilot_more_continued.settings import Settings
 
-from copilot_more.rate_limit_types import RateLimitBehavior
+from copilot_more_continued.rate_limit_types import RateLimitBehavior
+
 
 class TestSettings(TestCase):
     """Tests for the Settings class."""
@@ -91,7 +92,9 @@ class TestSettings(TestCase):
     def test_api_keys_validation(self):
         """Test that API keys are correctly parsed from environment variable."""
         # Test empty value - prevent .env loading
-        with mock.patch.object(Settings, "model_config", SettingsConfigDict(env_file=None)):
+        with mock.patch.object(
+            Settings, "model_config", SettingsConfigDict(env_file=None)
+        ):
             with mock.patch.dict(os.environ, {"REFRESH_TOKEN": "gho_valid_token"}):
                 settings = Settings()
             assert settings.api_keys is None

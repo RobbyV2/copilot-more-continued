@@ -1,10 +1,13 @@
 from datetime import datetime, timedelta
 from typing import Dict, Optional
 
-from copilot_more.logger import logger
-from copilot_more.rate_limit_types import (MAX_DELAY_SECONDS,
-                                           RateLimitBehavior, RateLimitRule)
-from copilot_more.token_counter import TokenUsage
+from copilot_more_continued.logger import logger
+from copilot_more_continued.rate_limit_types import (
+    MAX_DELAY_SECONDS,
+    RateLimitBehavior,
+    RateLimitRule,
+)
+from copilot_more_continued.token_counter import TokenUsage
 
 
 class RateLimitError(Exception):

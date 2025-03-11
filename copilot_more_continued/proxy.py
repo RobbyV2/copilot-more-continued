@@ -14,7 +14,7 @@ from mitmproxy.io import FlowWriter
 from mitmproxy.options import Options
 from mitmproxy.tools.dump import DumpMaster
 
-from copilot_more.settings import settings
+from copilot_more_continued.settings import settings
 
 # Configure logging
 logger = logging.getLogger(__name__)

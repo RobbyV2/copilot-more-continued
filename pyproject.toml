@@ -1,9 +1,10 @@
 [tool.poetry]
-name = "copilot-more"
-version = "0.1.0"
-description = ""
-authors = ["Jijun Leng <962285+jjleng@users.noreply.github.com>"]
+name = "copilot-more-continued"
+version = "0.1.1"
+description = "Copilot More Continued - Maximize the value of your GitHub Copilot subscription"
+authors = ["RobbyV2 <81977892+RobbyV2@users.noreply.github.com>"]
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.12"
@@ -27,7 +28,7 @@ isort = "^5.13.2"
 pandas-stubs = "^2.2.3.241126"
 
 [tool.poetry.scripts]
-token-usage = "copilot_more.cli:app"
+token-usage = "copilot_more_continued.cli:app"
 
 [build-system]
 requires = ["poetry-core"]

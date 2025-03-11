@@ -5,7 +5,7 @@ from typing import Dict, List, Optional
 import pandas as pd
 import pystore  # type: ignore
 
-from copilot_more.logger import logger
+from copilot_more_continued.logger import logger
 
 
 class TokenUsage:

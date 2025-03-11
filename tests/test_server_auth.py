@@ -10,7 +10,7 @@ import pytest
 from fastapi import HTTPException
 from fastapi.security import APIKeyHeader
 
-from copilot_more.server import validate_api_key
+from copilot_more_continued.server import validate_api_key
 
 
 @pytest.fixture
@@ -25,6 +25,7 @@ def create_mock_request(auth_header: str = None):
     mock_request = mock.Mock()
     mock_request.headers = {"Authorization": auth_header} if auth_header else {}
     return mock_request
+
 
 @pytest.mark.asyncio
 async def test_validate_api_key_no_keys_configured(mock_settings):
@@ -85,5 +86,7 @@ async def test_validate_api_key_whitespace_handling(mock_settings):
     mock_settings.api_keys = "sk-valid-key"
 
     # Test with extra spaces
-    assert await validate_api_key(create_mock_request("  Bearer sk-valid-key  ")) is True
+    assert (
+        await validate_api_key(create_mock_request("  Bearer sk-valid-key  ")) is True
+    )
     assert await validate_api_key(create_mock_request("  sk-valid-key  ")) is True

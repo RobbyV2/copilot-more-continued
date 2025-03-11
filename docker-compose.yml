@@ -15,4 +15,4 @@ services:
       - PYTHONPATH=/app
       - PYTHONUNBUFFERED=1
       - REFRESH_TOKEN=${REFRESH_TOKEN}
-    command: poetry run uvicorn copilot_more.server:app --port ${PORT:-15432} --host 0.0.0.0
+    command: poetry run uvicorn copilot_more_continued.server:app --port ${PORT:-15432} --host 0.0.0.0

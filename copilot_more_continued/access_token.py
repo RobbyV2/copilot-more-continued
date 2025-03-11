@@ -5,8 +5,8 @@ from typing import Optional
 
 from aiohttp import ClientSession
 
-from copilot_more.logger import logger
-from copilot_more.settings import settings
+from copilot_more_continued.logger import logger
+from copilot_more_continued.settings import settings
 
 # Global variables for token caching
 # {"token": "xxx", "expires_at": 1732767035}

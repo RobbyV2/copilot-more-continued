@@ -13,14 +13,17 @@ from rich import print
 from rich.console import Console
 from rich.table import Table
 
-from copilot_more.access_token import get_cached_copilot_token, refresh_token
-from copilot_more.logger import logger
-from copilot_more.proxy import RECORD_TRAFFIC, get_proxy_url, initialize_proxy
-from copilot_more.rate_limiter import (RateLimiter, RateLimitError,
-                                       RateLimitRule)
-from copilot_more.settings import settings
-from copilot_more.token_counter import TokenUsage
-from copilot_more.utils import StringSanitizer
+from copilot_more_continued.access_token import get_cached_copilot_token, refresh_token
+from copilot_more_continued.logger import logger
+from copilot_more_continued.proxy import RECORD_TRAFFIC, get_proxy_url, initialize_proxy
+from copilot_more_continued.rate_limiter import (
+    RateLimiter,
+    RateLimitError,
+    RateLimitRule,
+)
+from copilot_more_continued.settings import settings
+from copilot_more_continued.token_counter import TokenUsage
+from copilot_more_continued.utils import StringSanitizer
 
 console = Console()
 
@@ -82,12 +85,14 @@ async def lifespan(app: FastAPI):
     # Platform-specific signal handling
     loop = asyncio.get_running_loop()
     import sys
-    if sys.platform != 'win32':  # Only add signal handlers on non-Windows platforms
+
+    if sys.platform != "win32":  # Only add signal handlers on non-Windows platforms
         for sig in (signal.SIGTERM, signal.SIGINT):
             loop.add_signal_handler(sig, handle_signal)
     else:
         # Alternative approach for Windows
         import signal
+
         # Use the default signal handler on Windows
         for sig in (signal.SIGTERM, signal.SIGINT):
             signal.signal(sig, lambda s, f: os._exit(0))
@@ -103,7 +108,7 @@ async def validate_api_key(request: Request):
     Validate API key in request if API_KEYS setting is configured.
     Raises HTTPException if validation fails.
     """
-    
+
     if not settings.api_keys:
         return True
 
@@ -111,24 +116,24 @@ async def validate_api_key(request: Request):
     auth_header = request.headers.get("Authorization")
     if not auth_header:
         raise HTTPException(401, "API key required")
-    
+
     api_key = auth_header.strip()
     if api_key.startswith("Bearer "):
         api_key = api_key.replace("Bearer ", "").strip()
-    
+
     logger.debug(f"Received auth header: {auth_header}")
     logger.debug(f"Extracted API key: {api_key}")
-    
+
     # Add explicit repr() to see exact string content including whitespace
     valid_keys = [key.strip() for key in settings.api_keys.split(",") if key.strip()]
     logger.debug("Raw API keys setting: %r", settings.api_keys)
     logger.debug("Parsed valid keys: %r", valid_keys)
     logger.debug("Received API key: %r", api_key)
-    
+
     if api_key not in valid_keys:
         logger.error(f"Invalid API key: {api_key!r} not in valid keys: {valid_keys!r}")
         raise HTTPException(401, "Invalid API key")
-    
+
     logger.debug("API key validation successful")
     return True
 

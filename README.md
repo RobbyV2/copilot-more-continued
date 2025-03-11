@@ -1,40 +1,35 @@
-# Thanks for Your Support
+# Read first
 
-Given that GitHub may enforce stricter policies, I want to minimize risks for users. As a result, I am transitioning the project to maintenance mode. The repository will remain available for reference, but complete removal is also a possibility, with no further notice. No major developments will be made. Please conduct your own due diligence and assess the risks before using this tool.
+- Constantly hitting a 429 error (rate limit) can get your GH Copilot subscription suspended. Knowing this is important to protect yourself. It isn't just for this project, people can get banned by using the LM API; see this [reddit thread](https://www.reddit.com/r/RooCode/s/3VXA5FUpA5).
+- It seems you can hit error 429 quicker with the newer Claude 3.7 Sonnet models (they probably smaller quotas, and 3.7 runs faster than 3.5).
+- Take advantage of the built-in token/rate limiter, to avoid excessive usage and possible termination.
 
-# MUST READ!!!
+If you want to know more about GH Copilot suspension risk, read this [GitHub issue comment](https://github.com/RooVetGit/Roo-Code/issues/1203#issuecomment-2692865792)
 
-- Constantly hitting 429 (rate limit) can get your GH Copilot subscription suspended. Knowing this is important to protect yourself. Not just copilot-more, people get banned by using LM API too because of this, see [reddit thread](https://www.reddit.com/r/RooCode/s/3VXA5FUpA5).
-- It seems you can hit 429 quicker with the Claude 3.7 Sonnet models (probably smaller quotas  + 3.7 runs faster than 3.5).
-- copilot-more can now display token usage stats for your awareness. [PR 41](https://github.com/jjleng/copilot-more/pull/41)
-- Highly recommend leveraging the advanced rate limiter features (both token- and request-based) to prevent excessive token usage.
+# Copilot More Continued
 
-If you want to know more about GH Copilot suspension risk, read this https://github.com/RooVetGit/Roo-Code/issues/1203#issuecomment-2692865792
-
-# copilot-more
-
-`copilot-more` maximizes the value of your GitHub Copilot subscription by exposing models like Claude-3.7-Sonnet for use in agentic coding tools such as Cline, or any tool that supports bring-your-own-model setups. Unlike costly pay-as-you-go APIs, this approach lets you leverage these powerful models affordably.
+`Copilot More Continued` maximizes the value of your GitHub Copilot subscription by exposing models like Claude-3.7-Sonnet for use in agentic coding tools such as Cline, or any tool that supports bring-your-own-model setups. Unlike costly pay-as-you-go APIs, this approach lets you leverage these powerful models affordably.
 
 ## Ethical Use
+
 - Respect the GitHub Copilot terms of service.
 - Only use the API for coding tasks.
 - Be mindful of the risk of being banned by GitHub Copilot for misuse.
-
 
 ## 🏃‍♂️ How to Run
 
 1. Get the refresh token
 
-   A refresh token is used to get the access token. This token should never be shared with anyone :). You can get the refresh token by following the steps below:
+   A refresh token is used to get the access token, and it contains various permissions to your account. You can get the refresh token by following the steps below:
 
-    - Run the following command and note down the returned `device_code` and `user_code`.:
+    - Run the following command and note down the returned `device_code` and `user_code`:
 
     ```bash
     # 01ab8ac9400c4e429b23 is the client_id for the VS Code
     curl https://github.com/login/device/code -X POST -d 'client_id=01ab8ac9400c4e429b23&scope=user:email'
     ```
 
-    - Open https://github.com/login/device/ and enter the `user_code`.
+    - Open [GitHub Device Login](https://github.com/login/device/) and enter the `user_code`.
 
     - Replace `YOUR_DEVICE_CODE` with the `device_code` obtained earlier and run:
 
@@ -44,29 +39,29 @@ If you want to know more about GH Copilot suspension risk, read this https://git
 
     - Note down the `access_token` starting with `gho_`.
 
+1. Install and run copilot more continued
 
-2. Install and run copilot_more
-
-  * Bare metal installation:
+   - Bare metal installation:
 
     ```bash
-    git clone https://github.com/jjleng/copilot-more.git
-    cd copilot-more
-    # install dependencies
+    git clone https://github.com/RobbyV2/copilot-more-continued.git
+    cd copilot-more-continued
+    # Install dependencies
     poetry install
-    # run the server. Replace gho_xxxxx with the refresh token you got in the previous step. Note, you can use any port number you want.
-    REFRESH_TOKEN=gho_xxxxx poetry run uvicorn copilot_more.server:app --port 15432
+    # Run the server
+    poetry run uvicorn copilot_more_continued.server:app --host 0.0.0.0 --port 15432
     ```
-  * Docker Compose installation:
+
+   - Docker Compose installation:
 
     ```bash
-    git clone https://github.com/jjleng/copilot-more.git
-    cd copilot-more
-    # run the server. Ensure you either have the refresh token in the .env file or pass it as an environment variable.
+    git clone https://github.com/RobbyV2/copilot-more-continued.git
+    cd copilot-more-continued
+    # Run the server
     docker-compose up --build
     ```
 
-3. Alternatively, use the `refresh-token.sh` script to automate the above.
+  Alternatively, use the `refresh-token.sh` script to automate the above.
 
 ## ⚙️ Configuration
 
@@ -110,14 +105,9 @@ curl http://localhost:15432/chat/completions \
 If no API keys are configured, the server accepts any API key to maintain compatibility with existing clients.
 
 Example API_KEYS configuration:
-```
+
+```env
 API_KEYS=sk-xxx,key1,key2
-```
-
-Once you have set up your `.env` file with all your configuration settings, you can simply run the server without specifying environment variables on the command line:
-
-```bash
-poetry run uvicorn copilot_more.server:app --port 15432
 ```
 
 ### Rate Limiting Configuration
@@ -148,6 +138,7 @@ Rate limiting is optional and only applied to models that you explicitly configu
 ```
 
 Configuration options:
+
 - `window_minutes`: Time window in minutes
 - `total_tokens`: Max total tokens in window (optional)
 - `input_tokens`: Max input tokens in window (optional)
@@ -158,6 +149,7 @@ Configuration options:
 **⚠️ Warning:** The default `rate_limits.json` is just an example and not necessarily suitable for production use. You should adjust these limits based on your actual usage patterns.
 
 Notes:
+
 - Rate limits are only applied to models listed in the configuration file
 - Models not listed in the file will have no rate limits
 - You must specify at least one of: total_tokens, input_tokens, output_tokens, or requests
@@ -166,6 +158,7 @@ Notes:
 ### Additional Rate Control
 
 While rate limits help control usage within time windows, sometimes you may need finer control over request spacing. The `SLEEP_BETWEEN_CALLS` setting introduces a fixed delay between API calls, which can help prevent burst requests when the API responds very quickly. This is particularly useful when:
+
 - You want to ensure a minimum time gap between requests regardless of response speed
 - You need to prevent rapid successive requests that might trigger rate limits
 - You want to maintain a more consistent, predictable request pattern
@@ -173,18 +166,18 @@ While rate limits help control usage within time windows, sometimes you may need
 Example: Setting `SLEEP_BETWEEN_CALLS=1.0` ensures at least 1 second between each API call, even if the API responds faster.
 
 ## ✨ Magic Time
-Now you can connect Cline or any other AI client to `http://localhost:15432` and start coding with the power of GPT-4o and Claude-3.5-Sonnet without worrying about the cost. Note, the copilot-more manages the access token, you can use whatever string as API keys if Cline or the AI tools ask for one.
+
+Now you can connect Cline or any other AI client to `http://localhost:15432` and start coding with the power of GPT-4o and Claude-3.5-Sonnet without worrying about the cost.
 
 ### 🚀 Cline Integration
 
 1. Install Cline `code --install-extension saoudrizwan.claude-dev`
 2. Open Cline and go to the settings
 3. Set the following:
-     * **API Provider**: `OpenAI Compatible`
-     * **API URL**: `http://localhost:15432`
-     * **API Key**: `anything`
-     * **Model**: `gpt-4o`, `claude-3.7-sonnet`, `o1`, `o3-mini`
-
+     - **API Provider**: `OpenAI Compatible`
+     - **API URL**: `http://localhost:15432`
+     - **API Key**: `anything`
+     - **Model**: `gpt-4o`, `claude-3.7-sonnet`, `o1`, `o3-mini`
 
 ## 🔍 Debugging
 
@@ -195,7 +188,7 @@ For troubleshooting integration issues, you can enable traffic logging to inspec
 To enable logging, set the `RECORD_TRAFFIC` environment variable to `true`:
 
 ```bash
-RECORD_TRAFFIC=true REFRESH_TOKEN=gho_xxxx poetry run uvicorn copilot_more.server:app --port 15432
+RECORD_TRAFFIC=true poetry run uvicorn copilot-more-continued.server:app --port 15432
 ```
 
 Alternatively, you can add `RECORD_TRAFFIC=true` to your `.env` file.
@@ -206,23 +199,6 @@ Attach this file when reporting issues. Please zip the original file that ends w
 
 Note: the Authorization header has been redacted, so the refresh token won't be leaked.
 
-## 🤔 Limitation
+## 🤔 Limitations
 
-The GH Copilot models sit behind an API server that is not fully compatible with the OpenAI API. You cannot pass in a message like this:
-
-```json
-    {
-      "role": "user",
-      "content": [
-        {
-          "type": "text",
-          "text": "<task>\nreview the code\n</task>"
-        },
-        {
-          "type": "text",
-          "text": "<task>\nreview the code carefully\n</task>"
-        }
-      ]
-    }
-```
-copilot-more takes care of this limitation by converting the message to a format that the GH Copilot API understands. However, without the `type`, we cannot leverage the models' vision capabilities, so that you cannot do screenshot analysis.
+Currently, images are not supported, although it may be possible as a few models (e.g. gpt-4o) now support images.

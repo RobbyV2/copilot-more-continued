@@ -43,4 +43,4 @@ EOF
 
 echo "Created .env file with all configuration settings."
 echo "Run the app with the following command:"
-echo "poetry run uvicorn copilot_more.server:app --port 15432"
+echo "poetry run uvicorn copilot_more_continued.server:app --host 0.0.0.0 --port 15432"

@@ -1,5 +1,5 @@
 """
-Settings module for copilot-more using pydantic-settings for configuration management.
+Settings module for Copilot More Continued using pydantic-settings for configuration management.
 """
 
 import json
@@ -11,7 +11,7 @@ from typing import Dict, List, Optional
 from pydantic import BaseModel, Field, NonNegativeFloat, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from copilot_more.rate_limit_types import RateLimitBehavior
+from copilot_more_continued.rate_limit_types import RateLimitBehavior
 
 
 class RateLimitSettings(BaseModel):
@@ -191,7 +191,7 @@ def get_settings() -> Settings:
     settings = Settings()
 
     # Initialize logger with configured level
-    from copilot_more.logger import init_logger
+    from copilot_more_continued.logger import init_logger
 
     init_logger(settings.loguru_level)
 
