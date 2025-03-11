@@ -16,7 +16,7 @@ from copilot_more_continued.server import validate_api_key
 @pytest.fixture
 def mock_settings():
     """Mock settings with various API key configurations"""
-    with mock.patch("copilot_more.server.settings") as mock_settings:
+    with mock.patch("copilot_more_continued.server.settings") as mock_settings:
         yield mock_settings
 
 
