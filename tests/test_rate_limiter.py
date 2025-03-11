@@ -3,10 +3,13 @@ from unittest.mock import Mock
 
 import pytest
 
-from copilot_more.rate_limit_types import (MAX_DELAY_SECONDS,
-                                           RateLimitBehavior, RateLimitRule)
-from copilot_more.rate_limiter import RateLimiter, RateLimitError
-from copilot_more.token_counter import TokenUsage
+from copilot_more_continued.rate_limit_types import (
+    MAX_DELAY_SECONDS,
+    RateLimitBehavior,
+    RateLimitRule,
+)
+from copilot_more_continued.rate_limiter import RateLimiter, RateLimitError
+from copilot_more_continued.token_counter import TokenUsage
 
 
 @pytest.fixture

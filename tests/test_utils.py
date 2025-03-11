@@ -2,7 +2,7 @@ from typing import Any
 
 import pytest
 
-from copilot_more.utils import (ConversionResult, EncodingStrategy,
+from copilot_more_continued.utils import (ConversionResult, EncodingStrategy,
                                 StringSanitizer)
 
 
