@@ -46,11 +46,21 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          
       - name: Get version from pyproject.toml
         id: get_version
         run: |
-          VERSION=$(poetry version -s)
+          poetry version -s | tee version.txt
+          VERSION=$(cat version.txt)
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
           
       - name: Create Git Tag
