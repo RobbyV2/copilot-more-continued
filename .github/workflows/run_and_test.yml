@@ -1,0 +1,37 @@
+name: Run & Test
+
+on:
+  push:
+    branches: [ '*' ]
+  pull_request:
+    branches: [ '*' ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          
+      - name: Install dependencies
+        run: poetry install
+        
+      - name: Run tests
+        run: poetry run pytest
+        
+      - name: Start server and verify
+        run: |
+          poetry run uvicorn copilot_more_continued.server:app --host 0.0.0.0 --port 15432 & 
+          sleep 5  # Give the server time to start
+          curl -f http://localhost:15432/health || exit 1  # Check if server is responding
+          pkill uvicorn  # Stop the server
