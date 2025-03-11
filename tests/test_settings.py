@@ -9,13 +9,13 @@ from unittest import TestCase, mock
 
 import pytest
 from pydantic import ValidationError
+from pydantic_settings import SettingsConfigDict
 
 # Ensure we don't trigger the validation when importing for tests
 with mock.patch.dict(os.environ, {"REFRESH_TOKEN": "gho_test_token_for_import"}):
     from copilot_more.settings import Settings
 
 from copilot_more.rate_limit_types import RateLimitBehavior
-
 
 class TestSettings(TestCase):
     """Tests for the Settings class."""
@@ -29,6 +29,7 @@ class TestSettings(TestCase):
         os.environ.pop("MAX_TOKENS", None)
         os.environ.pop("TIMEOUT_SECONDS", None)
         os.environ.pop("RECORD_TRAFFIC", None)
+        os.environ.pop("API_KEYS", None)
 
     def test_refresh_token_validation(self):
         """Test that refresh token is validated."""
@@ -86,6 +87,37 @@ class TestSettings(TestCase):
             assert settings.max_tokens == 5000
             assert settings.timeout_seconds == 600
             assert settings.record_traffic is True
+
+    def test_api_keys_validation(self):
+        """Test that API keys are correctly parsed from environment variable."""
+        # Test empty value - prevent .env loading
+        with mock.patch.object(Settings, "model_config", SettingsConfigDict(env_file=None)):
+            with mock.patch.dict(os.environ, {"REFRESH_TOKEN": "gho_valid_token"}):
+                settings = Settings()
+            assert settings.api_keys is None
+
+        # Test single key
+        with mock.patch.dict(
+            os.environ, {"REFRESH_TOKEN": "gho_valid_token", "API_KEYS": "key1"}
+        ):
+            settings = Settings()
+            assert settings.api_keys == "key1"
+
+        # Test multiple keys
+        with mock.patch.dict(
+            os.environ,
+            {"REFRESH_TOKEN": "gho_valid_token", "API_KEYS": "key1, key2,key3"},
+        ):
+            settings = Settings()
+            assert settings.api_keys == "key1,key2,key3"
+
+        # Test empty keys are filtered out
+        with mock.patch.dict(
+            os.environ,
+            {"REFRESH_TOKEN": "gho_valid_token", "API_KEYS": "key1,, key2, ,key3,"},
+        ):
+            settings = Settings()
+            assert settings.api_keys == "key1,key2,key3"
 
     def test_boolean_conversion(self):
         """Test that boolean values are converted correctly."""

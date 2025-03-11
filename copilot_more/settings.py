@@ -42,8 +42,8 @@ class Settings(BaseSettings):
     """
 
     # GitHub Copilot API settings
-    refresh_token: str = Field(
-        default="", description="GitHub Copilot refresh token for authentication"
+    refresh_token: Optional[str] = Field(
+        default=None, description="GitHub Copilot refresh token for authentication"
     )
 
     chat_completions_api_endpoint: str = Field(
@@ -127,6 +127,12 @@ class Settings(BaseSettings):
     )
 
     # Logging settings
+    # API key validation settings
+    api_keys: Optional[str] = Field(
+        default=None,
+        description="Comma-delimited list of valid API keys. If set, requests must include a valid key.",
+    )
+
     loguru_level: str = Field(
         default="INFO", description="Loguru logging level (default: INFO)"
     )
@@ -146,16 +152,23 @@ class Settings(BaseSettings):
     )
 
     @field_validator("refresh_token")
-    def validate_refresh_token(cls, v: str) -> str:
-        """Validate that the refresh token is provided and starts with 'gho_'."""
-        if not v:
-            raise ValueError("REFRESH_TOKEN environment variable is required")
+    def validate_refresh_token(cls, v: Optional[str]) -> Optional[str]:
+        """Validate that the refresh token starts with 'gho_' if provided."""
+        if v:
+            if not v.startswith("gho_"):
+                raise ValueError(
+                    "REFRESH_TOKEN should be a GitHub OAuth token starting with 'gho_'"
+                )
+            return v
+        return None
 
-        if not v.startswith("gho_"):
-            raise ValueError(
-                "REFRESH_TOKEN should be a GitHub OAuth token starting with 'gho_'"
-            )
-        return v
+    @field_validator("api_keys")
+    def validate_api_keys(cls, v: Optional[str]) -> Optional[str]:
+        """Validate and clean up API keys string."""
+        if not v or not v.strip():
+            return None
+        keys = [key.strip() for key in v.split(",") if key.strip()]
+        return ",".join(keys) if keys else None
 
     @field_validator("max_delay_seconds")
     def validate_max_delay(cls, v: float, info) -> float:

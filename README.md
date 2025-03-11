@@ -81,8 +81,38 @@ The application allows you to customize behavior through environment variables o
 | Timeout | `TIMEOUT_SECONDS` | 300 | API request timeout in seconds |
 | Record Traffic | `RECORD_TRAFFIC` | false | Whether to record API traffic |
 | Sleep Between Calls | `SLEEP_BETWEEN_CALLS` | 0.0 | Sleep duration in seconds between API calls |
+| API Keys | `API_KEYS` | None | Optional comma-delimited list of valid API keys |
 
 See `.env.example` for a template configuration file. You can `cp .env.example .env` and modify the values as needed.
+
+### Running Tests
+
+Unit tests require no environment variables to run:
+
+```bash
+poetry install  # Install dependencies if not already done
+poetry run pytest  # Run all tests
+poetry run pytest -v  # Run with verbose output
+poetry run pytest tests/test_server_auth.py  # Run specific test file
+```
+
+### API Key Validation
+
+When `API_KEYS` is set, the server enforces API key validation on all requests. Keys should be provided in the Authorization header using the Bearer scheme:
+
+```bash
+curl http://localhost:15432/chat/completions \
+  -H "Authorization: Bearer YOUR-API-KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"model": "gpt-4o", "messages": [{"role": "user", "content": "Hello"}]}'
+```
+
+If no API keys are configured, the server accepts any API key to maintain compatibility with existing clients.
+
+Example API_KEYS configuration:
+```
+API_KEYS=sk-xxx,key1,key2
+```
 
 Once you have set up your `.env` file with all your configuration settings, you can simply run the server without specifying environment variables on the command line:
 

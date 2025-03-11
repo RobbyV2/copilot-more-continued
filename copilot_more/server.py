@@ -98,6 +98,41 @@ async def lifespan(app: FastAPI):
     logger.info("Application shutting down normally")
 
 
+async def validate_api_key(request: Request):
+    """
+    Validate API key in request if API_KEYS setting is configured.
+    Raises HTTPException if validation fails.
+    """
+    
+    if not settings.api_keys:
+        return True
+
+    logger.debug(f"API keys configured: {settings.api_keys}")
+    auth_header = request.headers.get("Authorization")
+    if not auth_header:
+        raise HTTPException(401, "API key required")
+    
+    api_key = auth_header.strip()
+    if api_key.startswith("Bearer "):
+        api_key = api_key.replace("Bearer ", "").strip()
+    
+    logger.debug(f"Received auth header: {auth_header}")
+    logger.debug(f"Extracted API key: {api_key}")
+    
+    # Add explicit repr() to see exact string content including whitespace
+    valid_keys = [key.strip() for key in settings.api_keys.split(",") if key.strip()]
+    logger.debug("Raw API keys setting: %r", settings.api_keys)
+    logger.debug("Parsed valid keys: %r", valid_keys)
+    logger.debug("Received API key: %r", api_key)
+    
+    if api_key not in valid_keys:
+        logger.error(f"Invalid API key: {api_key!r} not in valid keys: {valid_keys!r}")
+        raise HTTPException(401, "Invalid API key")
+    
+    logger.debug("API key validation successful")
+    return True
+
+
 app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
@@ -331,10 +366,13 @@ async def execute_rate_limit_sleep(delay: float, reason: str = "Rate limit") -> 
 
 
 @app.get("/models")
-async def list_models():
+async def list_models(request: Request):
     """
     Proxies models request.
+    Requires valid API key if API_KEYS is configured.
     """
+    await validate_api_key(request)
+
     try:
         token = await get_cached_copilot_token()
         session = await create_client_session()
@@ -365,7 +403,10 @@ async def list_models():
 async def proxy_chat_completions(request: Request):
     """
     Proxies chat completion requests with SSE support.
+    Requires valid API key if API_KEYS is configured.
     """
+    await validate_api_key(request)
+
     request_body = await request.json()
     logger.debug(f"Received request: {json.dumps(request_body, indent=2)}")
 
