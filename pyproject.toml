@@ -18,7 +18,7 @@ loguru = "^0.7.3"
 cachetools = "^5.5.2"        # DO NOT remove
 pystore = "^0.1.24"
 typer = "^0.15.2"
-requests = "^2.32.3"
+requests = "^2.32.4"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.4"
